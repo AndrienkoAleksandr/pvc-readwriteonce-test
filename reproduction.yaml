@@ -78,8 +78,6 @@ spec:
         - name: ws-rgdp4
           mountPath: /workspace/source
           subPath: pv-nodejs-builder-2022-02-08-105858
-        - name: tekton-internal-tools
-          mountPath: /tekton/tools
         - name: tekton-internal-workspace
           mountPath: /workspace
         - name: tekton-internal-secret-volume-pipeline-dockercfg-xhzdn-gn7kh
@@ -87,14 +85,6 @@ spec:
         - name: kube-api-access-6mt8b
           readOnly: true
           mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-        - name: config-trusted-cabundle-volume
-          readOnly: true
-          mountPath: /tekton-custom-certs/ca-bundle.crt
-          subPath: ca-bundle.crt
-        - name: config-service-cabundle-volume
-          readOnly: true
-          mountPath: /tekton-custom-certs/service-ca.crt
-          subPath: service-ca.crt
       terminationMessagePolicy: File
       image: >-
         registry.redhat.io/ocp-tools-4-tech-preview/source-to-image-rhel8@sha256:e518e05a730ae066e371a4bd36a5af9cedc8686fd04bd59648d20ea0a486d7e5
