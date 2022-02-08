@@ -70,7 +70,7 @@ spec:
       terminationMessagePath: /tekton/termination
       name: step-generate
       command:
-        - /tekton/tools/entrypoint
+        - sh
       env:
         - name: HOME
           value: /tekton/home
@@ -116,29 +116,9 @@ spec:
         registry.redhat.io/ocp-tools-4-tech-preview/source-to-image-rhel8@sha256:e518e05a730ae066e371a4bd36a5af9cedc8686fd04bd59648d20ea0a486d7e5
       workingDir: /workspace/source
       args:
-        - '-wait_file'
-        - /tekton/downward/ready
-        - '-wait_file_content'
-        - '-post_file'
-        - /tekton/tools/0
-        - '-termination_path'
-        - /tekton/termination
-        - '-step_metadata_dir'
-        - /tekton/steps/step-generate
-        - '-step_metadata_dir_link'
-        - /tekton/steps/0
-        - '-docker-cfg=pipeline-dockercfg-xhzdn'
-        - '-results'
-        - IMAGE_DIGEST
-        - '-entrypoint'
-        - s2i
-        - '--'
-        - build
-        - .
+        - -c
         - >-
-          image-registry.openshift-image-registry.svc:5000/openshift/nodejs:14-ubi8
-        - '--as-dockerfile'
-        - /gen-source/Dockerfile.gen
+          s2i build . image-registry.openshift-image-registry.svc:5000/openshift/nodejs:14-ubi8 '--as-dockerfile' /gen-source/Dockerfile.gen
     - resources: {}
       terminationMessagePath: /tekton/termination
       name: step-build
