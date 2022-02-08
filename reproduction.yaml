@@ -244,3 +244,95 @@ spec:
         - >-
           image-registry.openshift-image-registry.svc:5000/default/single-nodejs-app:2e92018
         - .
+  serviceAccount: pipeline
+  volumes:
+    - name: tekton-internal-workspace
+      emptyDir: {}
+    - name: tekton-internal-home
+      emptyDir: {}
+    - name: tekton-internal-results
+      emptyDir: {}
+    - name: tekton-internal-steps
+      emptyDir: {}
+    - name: tekton-internal-secret-volume-pipeline-dockercfg-xhzdn-gn7kh
+      secret:
+        secretName: pipeline-dockercfg-xhzdn
+        defaultMode: 420
+    - name: tekton-internal-scripts
+      emptyDir: {}
+    - name: tekton-internal-tools
+      emptyDir: {}
+    - name: tekton-internal-downward
+      downwardAPI:
+        items:
+          - path: ready
+            fieldRef:
+              apiVersion: v1
+              fieldPath: 'metadata.annotations[''tekton.dev/ready'']'
+        defaultMode: 420
+    - name: tekton-creds-init-home-0
+      emptyDir:
+        medium: Memory
+    - name: tekton-creds-init-home-1
+      emptyDir:
+        medium: Memory
+    - name: tekton-creds-init-home-2
+      emptyDir:
+        medium: Memory
+    - name: tekton-creds-init-home-3
+      emptyDir:
+        medium: Memory
+    - name: varlibcontainers
+      emptyDir: {}
+    - name: gen-source
+      emptyDir: {}
+    - name: ws-rgdp4
+      persistentVolumeClaim:
+        claimName: app-studio-default-workspace
+    - name: kube-api-access-6mt8b
+      projected:
+        sources:
+          - serviceAccountToken:
+              expirationSeconds: 3607
+              path: token
+          - configMap:
+              name: kube-root-ca.crt
+              items:
+                - key: ca.crt
+                  path: ca.crt
+          - downwardAPI:
+              items:
+                - path: namespace
+                  fieldRef:
+                    apiVersion: v1
+                    fieldPath: metadata.namespace
+          - configMap:
+              name: openshift-service-ca.crt
+              items:
+                - key: service-ca.crt
+                  path: service-ca.crt
+        defaultMode: 420
+    - name: config-trusted-cabundle-volume
+      configMap:
+        name: config-trusted-cabundle
+        items:
+          - key: ca-bundle.crt
+            path: ca-bundle.crt
+        defaultMode: 420
+    - name: config-service-cabundle-volume
+      configMap:
+        name: config-service-cabundle
+        items:
+          - key: service-ca.crt
+            path: service-ca.crt
+        defaultMode: 420
+  dnsPolicy: ClusterFirst
+  tolerations:
+    - key: node.kubernetes.io/not-ready
+      operator: Exists
+      effect: NoExecute
+      tolerationSeconds: 300
+    - key: node.kubernetes.io/unreachable
+      operator: Exists
+      effect: NoExecute
+      tolerationSeconds: 300
