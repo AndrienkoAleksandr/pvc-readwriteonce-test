@@ -80,10 +80,6 @@ spec:
           subPath: pv-nodejs-builder-2022-02-08-105858
         - name: tekton-internal-tools
           mountPath: /tekton/tools
-        - name: tekton-internal-downward
-          mountPath: /tekton/downward
-        - name: tekton-creds-init-home-0
-          mountPath: /tekton/creds
         - name: tekton-internal-workspace
           mountPath: /workspace
         - name: tekton-internal-secret-volume-pipeline-dockercfg-xhzdn-gn7kh
