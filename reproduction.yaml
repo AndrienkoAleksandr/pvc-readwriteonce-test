@@ -39,12 +39,6 @@ spec:
       volumeMounts:
         - name: tekton-internal-workspace
           mountPath: /workspace
-        - name: tekton-internal-home
-          mountPath: /tekton/home
-        - name: tekton-internal-results
-          mountPath: /tekton/results
-        - name: tekton-internal-steps
-          mountPath: /tekton/steps
         - name: kube-api-access-6mt8b
           readOnly: true
           mountPath: /var/run/secrets/kubernetes.io/serviceaccount
