@@ -32,37 +32,6 @@ spec:
       workingDir: /
     - resources: {}
       terminationMessagePath: /dev/termination-log
-      name: place-scripts
-      command:
-        - sh
-      imagePullPolicy: IfNotPresent
-      volumeMounts:
-        - name: tekton-internal-scripts
-          mountPath: /tekton/scripts
-        - name: tekton-internal-tools
-          mountPath: /tekton/tools
-        - name: kube-api-access-6mt8b
-          readOnly: true
-          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-      terminationMessagePolicy: File
-      image: >-
-        registry.access.redhat.com/ubi8/ubi-minimal@sha256:54ef2173bba7384dc7609e8affbae1c36f8a3ec137cacc0866116d65dd4b9afe
-      args:
-        - '-c'
-        - >
-          scriptfile="/tekton/scripts/script-3-9jbqs"
-
-          touch ${scriptfile} && chmod +x ${scriptfile}
-
-          cat > ${scriptfile} << '_EOF_'
-
-          IyEvYmluL3NoCnNldCAteGUKY2F0IC93b3Jrc3BhY2Uvc291cmNlL2ltYWdlLWRpZ2VzdCB8IHRlZSAvdGVrdG9uL3Jlc3VsdHMvSU1BR0VfRElHRVNU
-
-          _EOF_
-
-          /tekton/tools/entrypoint decode-script "${scriptfile}"
-    - resources: {}
-      terminationMessagePath: /dev/termination-log
       name: working-dir-initializer
       command:
         - sh
@@ -174,7 +143,7 @@ spec:
       terminationMessagePath: /tekton/termination
       name: step-build
       command:
-        - /tekton/tools/entrypoint
+        - /bin/bash
       env:
         - name: SSL_CERT_DIR
           value: >-
@@ -218,32 +187,18 @@ spec:
         registry.redhat.io/rhel8/buildah@sha256:99cae35f40c7ec050fed3765b2b27e0b8bbea2aa2da7c16408e2ca13c60ff8ee
       workingDir: /gen-source
       args:
-        - '-wait_file'
-        - /tekton/tools/0
-        - '-post_file'
-        - /tekton/tools/1
-        - '-termination_path'
-        - /tekton/termination
-        - '-step_metadata_dir'
-        - /tekton/steps/step-build
-        - '-step_metadata_dir_link'
-        - /tekton/steps/1
-        - '-docker-cfg=pipeline-dockercfg-xhzdn'
-        - '-results'
-        - IMAGE_DIGEST
-        - '-entrypoint'
-        - buildah
-        - '--'
-        - bud
-        - '--storage-driver=vfs'
-        - '--tls-verify=true'
-        - '--layers'
-        - '-f'
-        - /gen-source/Dockerfile.gen
-        - '-t'
+        - -c
         - >-
-          image-registry.openshift-image-registry.svc:5000/default/single-nodejs-app:2e92018
-        - .
+          pwd;
+          ls;
+          cat /gen-source/Dockerfile.gen;
+          ls -a /tekton/creds-secrets/pipeline-dockercfg-xhzdn;
+          cd /gen-source;
+
+          /tekton/tools/entrypoint  '-docker-cfg=pipeline-dockercfg-xhzdn';
+
+          cat ${HOME}/.docker/config.json;
+          buildah bud --storage-driver=vfs --tls-verify=true --layers -f Dockerfile.gen --authfile /tekton/creds-secrets/pipeline-dockercfg-xhzdn/.dockercfg -t image-registry.openshift-image-registry.svc:5000/default/single-nodejs-app:2e92018 .
   serviceAccount: pipeline
   volumes:
     - name: tekton-internal-workspace
