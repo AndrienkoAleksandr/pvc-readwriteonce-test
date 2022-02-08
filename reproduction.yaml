@@ -86,12 +86,6 @@ spec:
           mountPath: /tekton/creds
         - name: tekton-internal-workspace
           mountPath: /workspace
-        - name: tekton-internal-home
-          mountPath: /tekton/home
-        - name: tekton-internal-results
-          mountPath: /tekton/results
-        - name: tekton-internal-steps
-          mountPath: /tekton/steps
         - name: tekton-internal-secret-volume-pipeline-dockercfg-xhzdn-gn7kh
           mountPath: /tekton/creds-secrets/pipeline-dockercfg-xhzdn
         - name: kube-api-access-6mt8b
