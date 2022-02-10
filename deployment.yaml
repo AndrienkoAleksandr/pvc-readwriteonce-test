@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: parallel-work-with-pv
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: go-lang-test
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: go-lang-test
+    spec:
+      containers:
+        - name: go-lang-test
+          command:
+          - bash
+          args:
+          - -c
+          - >-
+            /application/folder-content-reader
+          image: quay.io/aandriienko/folder-reader
+          volumeMounts:
+            - name: source
+              mountPath: /workspace/source
+      volumes:
+        - name: source
+          persistentVolumeClaim:
+            claimName: app-studio-default-workspace

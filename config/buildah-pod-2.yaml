@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-2
+  namespace: default
+spec:
+  restartPolicy: Never
+  activeDeadlineSeconds: 5400
+  initContainers:
+    - resources: {}
+      terminationMessagePath: /dev/termination-log
+      name: working-dir-initializer
+      imagePullPolicy: IfNotPresent
+      volumeMounts:
+        - name: source
+          mountPath: /workspace/source
+      terminationMessagePolicy: File
+      image: >-
+        registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:158b0fda662e5bc05e2ff46f6864a8620bbb45e1a2388a456de43aad6e72d8f7
+      workingDir: /workspace/source
+
+      command:
+        - sh
+      args:
+        - '-c'
+        - >-
+          echo "Go 2!";
+          rm -rf test-2;
+          mkdir test-2;
+          cd test-2;
+          git clone https://github.com/redhat-appstudio/application-service.git . ;
+          ls;
+
+  serviceAccountName: buildah
+  priority: 0
+  terminationGracePeriodSeconds: 30
+  securityContext: {}
+
+  containers:
+    - resources: {}
+      terminationMessagePath: /tekton/termination
+      name: step-build
+      command:
+        - /bin/sh
+      imagePullPolicy: IfNotPresent
+      volumeMounts:
+        - name: varlibcontainers
+          mountPath: /var/lib/containers
+        - name: source
+          mountPath: /workspace/source
+      terminationMessagePolicy: File
+      image: >-
+        registry.redhat.io/rhel8/buildah@sha256:99cae35f40c7ec050fed3765b2b27e0b8bbea2aa2da7c16408e2ca13c60ff8ee
+      workingDir: /workspace/source
+      args:
+        - -c
+        - >-
+          cd test-2;
+          ls;
+          buildah --storage-driver=vfs bud --format=oci --tls-verify=true --no-cache -f ./Dockerfile -t image-registry.openshift-image-registry.svc:5000/default/single-container-app-2:4e5c5d6 .
+
+  volumes:
+    - name: source
+      persistentVolumeClaim:
+        claimName: app-studio-default-workspace
+    - name: varlibcontainers
+      emptyDir: {}
