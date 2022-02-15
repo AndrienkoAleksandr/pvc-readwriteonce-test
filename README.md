@@ -4,7 +4,7 @@ Execute:
 
 ./config/test.sh
 
-It should create two pods with parallel buildah image builds.
+It should create two pods with accessing the same pvc.
 
 Also you can apply:
 

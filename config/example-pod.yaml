@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example
+  namespace: default
+spec:
+  serviceAccountName: scc 
+  containers:
+    - name: step-build
+      command:
+        - /bin/sh
+      imagePullPolicy: IfNotPresent
+      volumeMounts:
+        - name: source
+          mountPath: /workspace/source
+      image: registry.access.redhat.com/ubi8/ubi
+      workingDir: /workspace/source
+      args:
+        - -c
+        - >-
+          while :; do ls -l || exit 1 ; sleep 5; done
+  volumes:
+    - name: source
+      persistentVolumeClaim:
+        claimName: app-studio-default-workspace

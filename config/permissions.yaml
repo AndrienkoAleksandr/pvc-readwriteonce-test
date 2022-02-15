@@ -2,22 +2,22 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: buildah-rolebinding
+  name: scc-rolebinding
   namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: buildah-clusterrole
+  name: scc-clusterrole
 subjects:
 - kind: ServiceAccount
-  name: buildah
+  name: scc
   namespace: default
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: buildah-clusterrole
+  name: scc-clusterrole
 rules:
 - apiGroups:
   - security.openshift.io
@@ -32,5 +32,5 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: buildah
+  name: scc
   namespace: default
